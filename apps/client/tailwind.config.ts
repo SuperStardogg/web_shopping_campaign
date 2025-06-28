@@ -1,13 +1,26 @@
-// tailwind.config.js
+import { type Config } from 'tailwindcss'
+import defaultColors from 'tailwindcss/colors'
 export default {
-  purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
-  darkMode: false, // or 'media' or 'class'
+  darkMode: 'class',
+  content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      zIndex: {
+        1: '1',
+        2: '2',
+        99: '99',
+        999: '999',
+      },
+      borderWidth: {
+        1: '1px',
+      },
+      spacing: {
+        15: '3.75rem',
+      },
+    },
+    colors: {
+      ...defaultColors,
+    },
   },
-  variants: {
-    extend: {},
-  },
-  plugins: [],
-}
-
+  plugins: [ ],
+} satisfies Config
