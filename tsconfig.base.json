@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext",
+    "lib": ["DOM", "ESNext", "WebWorker"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "strict": true,
+    "noImplicitAny": false,
+    "declaration": true,
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "incremental": false,
+    "skipLibCheck": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+  },
+  "include": ["packages"],
+  "exclude": ["node_modules", "**/dist", "public", "tests"]
+}

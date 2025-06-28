@@ -1,0 +1,29 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // "moduleResolution": "Bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "#/*": ["types/*"]
+    },
+    "typeRoots": ["./node_modules/@types/", "./types", "./node_modules"],
+    "types": [
+      "vite/client",
+      "vite-plugin-pages/client",
+      "vite-plugin-vue-layouts/client",
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.vue",
+    "src/**/__test__/**/*.ts",
+    "types/**/*.d.ts",
+    "types/**/*.ts",
+    "vite.config.ts",
+    "components.d.ts",
+    "./typed-router.d.ts"
+  ],
+  "exclude": ["dist", "node_modules", "public"]
+}
