@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PropType } from 'vue'
+import { PropType, computed } from 'vue'
 import Card from './ui/card/Card.vue'
 import type { DiscountCampaign as DiscountCampaignType } from '../types/campaign'
 import Badge from '../components/ui/badge/Badge.vue'
@@ -8,54 +8,46 @@ const props = defineProps({
   campaign: Object as PropType<DiscountCampaignType>,
 })
 
-const getTypeColor = (type: string) => {
-  switch (type) {
-    case 'percentage':
-      return 'bg-blue-100 text-blue-800'
-    case 'fixed':
-      return 'bg-green-100 text-green-800'
-    case 'category':
-      return 'bg-orange-100 text-orange-800'
-    case 'points':
-      return 'bg-purple-100 text-purple-800'
-    case 'special':
-      return 'bg-red-100 text-red-800'
-    default:
-      return 'bg-gray-100 text-gray-800'
-  }
-}
-
-const getValueDisplay = () => {
+const campaignType = computed(() => {
   switch (props.campaign?.type) {
     case 'percentage':
-      return `${props.campaign?.value}% off entire cart`
+      return {
+        color: 'bg-blue-100 text-blue-800',
+        value: `${props.campaign?.value}% off entire cart`,
+        badge: 'Coupon',
+      }
     case 'fixed':
-      return `${props.campaign?.value} THB off`
+      return {
+        color: 'bg-green-100 text-green-800',
+        value: `${props.campaign?.value} THB off`,
+        badge: 'Coupon',
+      }
     case 'category':
-      return `${props.campaign?.value}% off ${props.campaign?.category}`
+      return {
+        color: 'bg-orange-100 text-orange-800',
+        value: `${props.campaign?.value}% off ${props.campaign?.category}`,
+        badge: 'On Top',
+      }
     case 'points':
-      return `Use ${props.campaign?.pointsRequired} points (max ${props.campaign?.maxDiscountPercent}%)`
+      return {
+        color: 'bg-purple-100 text-purple-800',
+        value: `Use ${props.campaign?.pointsRequired} points (max ${props.campaign?.maxDiscountPercent}%)`,
+        badge: 'On Top',
+      }
     case 'special':
-      return `${props.campaign?.specialDiscount} THB off every ${props.campaign?.specialThreshold} THB`
+      return {
+        color: 'bg-red-100 text-red-800',
+        value: `${props.campaign?.specialDiscount} THB off every ${props.campaign?.specialThreshold} THB`,
+        badge: 'Seasonal',
+      }
     default:
-      return props.campaign?.value
+      return {
+        color: 'bg-gray-100 text-gray-800',
+        value: props.campaign?.value,
+        badge: 'Other',
+      }
   }
-}
-
-const getCategoryBadge = () => {
-  switch (props.campaign?.type) {
-    case 'fixed':
-    case 'percentage':
-      return 'Coupon'
-    case 'category':
-    case 'points':
-      return 'On Top'
-    case 'special':
-      return 'Seasonal'
-    default:
-      return 'Other'
-  }
-}
+})
 </script>
 
 <template>
@@ -77,13 +69,13 @@ const getCategoryBadge = () => {
             <p class="text-sm text-gray-500">{{ campaign?.description }}</p>
             <div class="flex items-center space-x-2 mt-2">
               <Badge class="bg-gray-100 text-gray-800">
-                {{ getCategoryBadge() }}
+                {{ campaignType.badge }}
               </Badge>
-              <Badge :class="getTypeColor(campaign.type)">
+              <Badge :class="campaignType.color">
                 {{ campaign?.type }}
               </Badge>
               <span class="text-sm font-medium text-gray-700">
-                {{ getValueDisplay() }}
+                {{ campaignType?.value }}
               </span>
               <span class="text-xs text-gray-400">
                 Priority: {{ campaign?.priority }}
