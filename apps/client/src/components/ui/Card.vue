@@ -2,11 +2,18 @@
   <div
     class="bg-light-50 flex flex-col gap-2 p-4 text-left rounded-lg card--shadow"
   >
-    <div class="text-lg">
-      <slot name="title" />
-    </div>
-    <div>
-      <slot name="content" />
+    <div class="flex gap-2 items-center">
+      <div class="flex gap-2 flex-col">
+        <div class="text-lg">
+          <slot name="title" />
+        </div>
+        <div>
+          <slot name="content" />
+        </div>
+      </div>
+      <div class="ml-auto">
+        <slot name="action" />
+      </div>
     </div>
   </div>
 </template>
