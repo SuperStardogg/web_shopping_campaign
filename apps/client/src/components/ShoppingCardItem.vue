@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import Card from '../components/ui/Card.vue'
+import { PropType } from 'vue'
+import Card from './ui/card/Card.vue'
 import type { CartItem as CartItemType } from '../types/shoppingCard'
 
 defineProps({
@@ -26,7 +27,7 @@ defineProps({
       </div>
     </template>
     <template #action>
-        <button class="bg-white">🗑</button>
+      <button class="bg-white">🗑</button>
     </template>
   </Card>
 </template>
