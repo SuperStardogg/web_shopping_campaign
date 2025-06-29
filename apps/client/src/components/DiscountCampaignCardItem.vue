@@ -64,7 +64,7 @@ const toggleCampaign = (campaign: DiscountCampaignType, isCheck: boolean) => {
 <template>
   <Card
     :class="`p-4 transition-all duration-200 ${
-      campaign?.active ? 'ring-2 ring-blue-200 bg-blue-50' : 'bg-white'
+      isCheckCampaign ? 'ring-2 ring-blue-200 bg-blue-50' : 'bg-white'
     }`"
   >
     <template #content>
