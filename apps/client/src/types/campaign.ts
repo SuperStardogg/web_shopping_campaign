@@ -14,3 +14,17 @@ export interface DiscountCampaign {
     specialThreshold?: number; // for special campaigns (every X THB)
     specialDiscount?: number; // for special campaigns (discount Y THB)
   }
+
+  export interface DiscountItem {
+    campaignId: string;
+    campaignName: string;
+    itemId: string;
+    originalPrice: number;
+    discountAmount: number;
+    finalPrice: number;
+  }
+  
+  export interface UserPoints {
+    available: number
+    used: number
+  }

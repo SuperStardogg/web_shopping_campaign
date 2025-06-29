@@ -2,7 +2,8 @@
 import ShoppingCardItem from '../components/ShoppingCardItem.vue'
 import DiscountCampaignCardItem from '../components/DiscountCampaignCardItem.vue'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
-import { Switch } from '../components/ui/switch'
+import PriceCalculationCard from '../components/PriceCalculationCard.vue'
+import type { DiscountCampaign as DiscountCampaignType } from '../types/campaign'
 
 const shoppingCardList = [
   {
@@ -49,7 +50,7 @@ const discountCampaignCardList = [
     type: 'fixed',
     value: 50,
     priority: 1,
-    active: true,
+    active: false,
     description: 'Fixed 50 THB discount on entire cart',
   },
   {
@@ -95,8 +96,8 @@ const discountCampaignCardList = [
   },
 ]
 
-const toggleCampaign = (id: string, active: boolean) => {
-  console.log(id, active)
+const selectCampaign = (campaign: DiscountCampaignType ) => {
+  console.log('>>>', campaign)
   // setDiscountCampaigns((campaigns) =>
   //   campaigns.map((campaign) =>
   //     campaign.id === id ? { ...campaign, active } : campaign
@@ -106,40 +107,39 @@ const toggleCampaign = (id: string, active: boolean) => {
 </script>
 
 <template>
-  <div class="w-full">
-    <Tabs default-value="cart">
-      <TabsList>
-        <TabsTrigger value="cart"> 🛍 Shopping cart </TabsTrigger>
-        <TabsTrigger value="campaigns"> 🏷 Campaigns </TabsTrigger>
-      </TabsList>
-      <TabsContent value="cart">
-        <div class="flex flex-col gap-2">
-          <template
-            v-for="(shoppingCard, index) in shoppingCardList"
-            :key="index"
-          >
-            <ShoppingCardItem :shoppingCard="shoppingCard" />
-          </template>
-        </div>
-      </TabsContent>
-      <TabsContent value="campaigns">
-        <div class="flex flex-col gap-2">
-          <template
-            v-for="(campaign, index) in discountCampaignCardList"
-            :key="index"
-          >
-            <DiscountCampaignCardItem :campaign="campaign">
-              <template #action="campaignValue">
-                <Switch
-                  :checked="campaignValue.active"
-                  @onCheckedChange="toggleCampaign(campaign.id, $event)"
-                />
-              </template>
-            </DiscountCampaignCardItem>
-          </template>
-        </div>
-      </TabsContent>
-    </Tabs>
+  <div class="flex gap-4 flex-col lg:flex-row">
+    <div class="w-full">
+      <Tabs default-value="cart">
+        <TabsList>
+          <TabsTrigger value="cart"> 🛍 Shopping cart </TabsTrigger>
+          <TabsTrigger value="campaigns"> 🏷 Campaigns </TabsTrigger>
+        </TabsList>
+        <TabsContent value="cart">
+          <div class="flex flex-col gap-2">
+            <template
+              v-for="(shoppingCard, index) in shoppingCardList"
+              :key="index"
+            >
+              <ShoppingCardItem :shoppingCard="shoppingCard" />
+            </template>
+          </div>
+        </TabsContent>
+        <TabsContent value="campaigns">
+          <div class="flex flex-col gap-2">
+            <template
+              v-for="(campaign, index) in discountCampaignCardList"
+              :key="index"
+            >
+              <DiscountCampaignCardItem :campaign="campaign" @select:campaign="selectCampaign">
+              </DiscountCampaignCardItem>
+            </template>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+    <div class="w-full max-w-[unset] lg:max-w-[400px]">
+      <PriceCalculationCard />
+    </div>
   </div>
 </template>
 

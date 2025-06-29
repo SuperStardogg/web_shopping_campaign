@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { PropType, computed } from 'vue'
+import { PropType, computed, ref } from 'vue'
 import Card from './ui/card/Card.vue'
 import type { DiscountCampaign as DiscountCampaignType } from '../types/campaign'
 import Badge from '../components/ui/badge/Badge.vue'
+import Checkbox from '../components/ui/checkbox/Checkbox.vue'
 
 const props = defineProps({
   campaign: Object as PropType<DiscountCampaignType>,
 })
+const emit = defineEmits<{
+  (event: 'select:campaign', campaign: DiscountCampaignType): void
+}>()
+
+const isCheckCampaign = ref(false)
 
 const campaignType = computed(() => {
   switch (props.campaign?.type) {
@@ -48,6 +54,11 @@ const campaignType = computed(() => {
       }
   }
 })
+
+const toggleCampaign = (campaign: DiscountCampaignType, isCheck: boolean) => {
+  isCheckCampaign.value = isCheck
+  emit('select:campaign', campaign)
+}
 </script>
 
 <template>
@@ -86,7 +97,10 @@ const campaignType = computed(() => {
       </div>
     </template>
     <template #action>
-      <slot name="action" v-bind="campaign"></slot>
+      <Checkbox
+        :model-value="isCheckCampaign"
+        @update:modelValue="toggleCampaign(campaign as DiscountCampaignType, $event as boolean)"
+      />
     </template>
   </Card>
 </template>
