@@ -48,7 +48,7 @@ const groupedDiscounts = props.calculation?.appliedDiscounts.reduce(
           <div class="flex justify-between items-center text-green-600">
             <span class="font-medium">Total Savings</span>
             <span class="font-bold"
-              >-฿{calculation.totalDiscount.toFixed(2)}</span
+              >-฿{{ calculation.totalDiscount.toFixed(2) }}</span
             >
           </div>
         </div>
@@ -57,7 +57,7 @@ const groupedDiscounts = props.calculation?.appliedDiscounts.reduce(
 
         <div class="flex justify-between items-center text-lg font-bold">
           <span>Final Total</span>
-          <span class="text-blue-600">{{
+          <span class="text-blue-600 ml-2">{{
             calculation?.finalTotal?.toFixed(2) || 0
           }}</span>
         </div>

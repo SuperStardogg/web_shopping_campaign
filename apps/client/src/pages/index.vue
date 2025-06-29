@@ -3,7 +3,19 @@ import ShoppingCardItem from '../components/ShoppingCardItem.vue'
 import DiscountCampaignCardItem from '../components/DiscountCampaignCardItem.vue'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import PriceCalculationCard from '../components/PriceCalculationCard.vue'
-import type { DiscountCampaign as DiscountCampaignType } from '../types/campaign'
+import type {
+  DiscountCampaign as DiscountCampaignType,
+  DiscountItem,
+  UserPoints,
+  PriceCalculation,
+} from '../types'
+import { ref, onMounted } from 'vue'
+import { DiscountEngine } from '../utils/DiscountEngine'
+
+const userPoints = {
+  available: 68,
+  used: 0,
+} as UserPoints
 
 const shoppingCardList = [
   {
@@ -94,16 +106,30 @@ const discountCampaignCardList = [
     active: false,
     description: '40 THB off for every 300 THB spent',
   },
-]
+] as DiscountCampaignType[]
 
-const selectCampaign = (campaign: DiscountCampaignType ) => {
-  console.log('>>>', campaign)
-  // setDiscountCampaigns((campaigns) =>
-  //   campaigns.map((campaign) =>
-  //     campaign.id === id ? { ...campaign, active } : campaign
-  //   )
-  // )
+const priceCalculation = ref<PriceCalculation>()
+
+const setPriceDiscount = () => {
+  priceCalculation.value = DiscountEngine.calculateFinalPrice(
+    shoppingCardList,
+    discountCampaignCardList,
+    userPoints
+  )
 }
+
+const selectCampaign = (campaign: DiscountCampaignType): void => {
+  discountCampaignCardList.map((campaignItem) => {
+    return campaignItem.id === campaign.id
+      ? { ...campaign, active: campaign.active }
+      : campaign
+  })
+  setPriceDiscount()
+}
+
+onMounted(() => {
+  setPriceDiscount()
+})
 </script>
 
 <template>
@@ -130,7 +156,10 @@ const selectCampaign = (campaign: DiscountCampaignType ) => {
               v-for="(campaign, index) in discountCampaignCardList"
               :key="index"
             >
-              <DiscountCampaignCardItem :campaign="campaign" @select:campaign="selectCampaign">
+              <DiscountCampaignCardItem
+                :campaign="campaign"
+                @select:campaign="selectCampaign"
+              >
               </DiscountCampaignCardItem>
             </template>
           </div>
@@ -138,7 +167,7 @@ const selectCampaign = (campaign: DiscountCampaignType ) => {
       </Tabs>
     </div>
     <div class="w-full max-w-[unset] lg:max-w-[400px]">
-      <PriceCalculationCard />
+      <PriceCalculationCard :calculation="priceCalculation" />
     </div>
   </div>
 </template>

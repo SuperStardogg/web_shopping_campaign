@@ -57,6 +57,7 @@ const campaignType = computed(() => {
 
 const toggleCampaign = (campaign: DiscountCampaignType, isCheck: boolean) => {
   isCheckCampaign.value = isCheck
+  campaign.active = isCheck
   emit('select:campaign', campaign)
 }
 </script>
