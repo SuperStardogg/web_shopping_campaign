@@ -3,7 +3,7 @@
     class="bg-light-50 flex flex-col gap-2 p-4 text-left rounded-lg card--shadow"
   >
     <div class="flex gap-2 items-center">
-      <div class="flex gap-2 flex-col">
+      <div class="flex gap-2 flex-col w-full">
         <div class="text-lg">
           <slot name="title" />
         </div>
