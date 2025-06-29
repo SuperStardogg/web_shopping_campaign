@@ -7,7 +7,6 @@ import {
 } from '../types'
 
 export class DiscountEngine {
-
   static calculateFinalPrice(
     cartItems: CartItem[],
     campaigns: DiscountCampaign[],
@@ -20,10 +19,12 @@ export class DiscountEngine {
     let appliedDiscounts: DiscountItem[] = []
     let itemPrices = new Map<string, number>()
 
+    // Initialize item prices
     cartItems.forEach((item) => {
       itemPrices.set(item.id, item.price * item.quantity)
     })
 
+    // Apply each campaign based on its category (Coupon, On Top, Seasonal)
     activeCampaigns.forEach((campaign) => {
       const discounts = this.applyCampaign(
         cartItems,
@@ -62,6 +63,7 @@ export class DiscountEngine {
 
     switch (campaign.type) {
       case 'fixed':
+        // Fixed amount discount - discounts the entire cart by subtracting an amount from the total price
         const orderTotal = cartItems.reduce(
           (sum, item) => sum + item.price * item.quantity,
           0
@@ -86,12 +88,14 @@ export class DiscountEngine {
         break
 
       case 'percentage':
+        // Percentage discount - discounts the entire cart by subtracting a percentage from the total price
         const totalAmount = cartItems.reduce(
           (sum, item) => sum + item.price * item.quantity,
           0
         )
         if (totalAmount >= (campaign.minAmount || 0)) {
           const totalDiscountAmount = totalAmount * (campaign.value / 100)
+          // Apply proportionally to all items
           cartItems.forEach((item) => {
             const itemTotal = item.price * item.quantity
             const proportion = itemTotal / totalAmount
@@ -109,6 +113,7 @@ export class DiscountEngine {
         break
 
       case 'category':
+        // Percentage discount by item category - discount specific category items
         cartItems
           .filter((item) => item.category === campaign.category)
           .forEach((item) => {
@@ -126,6 +131,8 @@ export class DiscountEngine {
         break
 
       case 'points':
+        // Discount by points - users spend points for fixed amount discount (1 point = 1 THB)
+        // Amount capped at 20% of total price
         const pointsOrderTotal = cartItems.reduce(
           (sum, item) => sum + item.price * item.quantity,
           0
@@ -139,6 +146,7 @@ export class DiscountEngine {
         )
 
         if (pointsToUse > 0) {
+          // Apply proportionally to all items
           cartItems.forEach((item) => {
             const itemTotal = item.price * item.quantity
             const proportion = itemTotal / pointsOrderTotal
@@ -156,6 +164,7 @@ export class DiscountEngine {
         break
 
       case 'special':
+        // Special campaigns - from total price, at every X THB, subtract a fixed amount Y THB
         const specialOrderTotal = cartItems.reduce(
           (sum, item) => sum + item.price * item.quantity,
           0
@@ -167,6 +176,7 @@ export class DiscountEngine {
           const numberOfDiscounts = Math.floor(specialOrderTotal / threshold)
           const totalSpecialDiscount = numberOfDiscounts * discountPerThreshold
 
+          // Apply proportionally to all items
           cartItems.forEach((item) => {
             const itemTotal = item.price * item.quantity
             const proportion = itemTotal / specialOrderTotal
@@ -185,5 +195,19 @@ export class DiscountEngine {
     }
 
     return discounts
+  }
+
+  // TODO: create UI for add multiple product quantity
+  private static itemQualifies(
+    item: CartItem,
+    campaign: DiscountCampaign
+  ): boolean {
+    if (campaign.minQuantity && item.quantity < campaign.minQuantity) {
+      return false
+    }
+    if (campaign.category && item.category !== campaign.category) {
+      return false
+    }
+    return true
   }
 }
