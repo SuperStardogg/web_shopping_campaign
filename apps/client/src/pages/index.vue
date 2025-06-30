@@ -11,6 +11,7 @@ import type {
 } from '../types'
 import { ref, onMounted } from 'vue'
 import { DiscountEngine } from '../utils/DiscountEngine'
+import { getAllProductsApi } from '../infrastructure/api/product'
 
 const userPoints = {
   available: 68,
@@ -129,6 +130,7 @@ const selectCampaign = (campaign: DiscountCampaignType): void => {
 
 onMounted(() => {
   setPriceDiscount()
+  getAllProductsApi()
 })
 </script>
 
