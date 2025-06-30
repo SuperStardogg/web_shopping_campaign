@@ -1,8 +1,5 @@
-export interface CartItem {
-  id: string
-  name: string
-  category: string
-  price: number
-  quantity: number
+import { Products } from '../infrastructure/api/product/type'
+
+export interface CartItem extends Products {
   image?: string
 }

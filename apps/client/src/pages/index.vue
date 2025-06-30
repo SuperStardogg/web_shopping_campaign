@@ -3,134 +3,58 @@ import ShoppingCardItem from '../components/ShoppingCardItem.vue'
 import DiscountCampaignCardItem from '../components/DiscountCampaignCardItem.vue'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import PriceCalculationCard from '../components/PriceCalculationCard.vue'
-import type {
-  DiscountCampaign as DiscountCampaignType,
-  DiscountItem,
-  UserPoints,
-  PriceCalculation,
-} from '../types'
+import type { UserPoints, PriceCalculation } from '../types'
 import { ref, onMounted } from 'vue'
-import { DiscountEngine } from '../utils/DiscountEngine'
 import { getAllProductsApi } from '../infrastructure/api/product'
+import { Products } from '../infrastructure/api/product/type'
+import { Campaigns } from '../infrastructure/api/campaign/type'
+import {
+  calculateDiscountCampaignApi,
+  getAllCampaignsApi,
+} from '../infrastructure/api/campaign'
 
 const userPoints = {
   available: 68,
   used: 0,
 } as UserPoints
 
-const shoppingCardList = [
-  {
-    id: '1',
-    name: 'T-Shirt',
-    category: 'Clothing',
-    price: 350,
-    quantity: 1,
-  },
-  {
-    id: '2',
-    name: 'Hat',
-    category: 'Accessories',
-    price: 250,
-    quantity: 1,
-  },
-  {
-    id: '3',
-    name: 'Hoodie',
-    category: 'Clothing',
-    price: 700,
-    quantity: 1,
-  },
-  {
-    id: '4',
-    name: 'Watch',
-    category: 'Electronics',
-    price: 850,
-    quantity: 1,
-  },
-  {
-    id: '5',
-    name: 'Bag',
-    category: 'Accessories',
-    price: 640,
-    quantity: 1,
-  },
-]
-
-const discountCampaignCardList = [
-  {
-    id: '1',
-    name: 'Fixed Amount Coupon',
-    type: 'fixed',
-    value: 50,
-    priority: 1,
-    active: false,
-    description: 'Fixed 50 THB discount on entire cart',
-  },
-  {
-    id: '2',
-    name: 'Percentage Discount Coupon',
-    type: 'percentage',
-    value: 10,
-    priority: 2,
-    active: false,
-    description: '10% off entire cart',
-  },
-  {
-    id: '3',
-    name: 'Clothing Category Discount',
-    type: 'category',
-    value: 15,
-    category: 'Clothing',
-    priority: 3,
-    active: false,
-    description: '15% off clothing items',
-  },
-  {
-    id: '4',
-    name: 'Points Discount',
-    type: 'points',
-    value: 0,
-    pointsRequired: 68,
-    maxDiscountPercent: 20,
-    priority: 4,
-    active: false,
-    description: 'Use 68 points for discount (max 20% of total)',
-  },
-  {
-    id: '5',
-    name: 'Special Campaign',
-    type: 'special',
-    value: 0,
-    specialThreshold: 300,
-    specialDiscount: 40,
-    priority: 5,
-    active: false,
-    description: '40 THB off for every 300 THB spent',
-  },
-] as DiscountCampaignType[]
-
 const priceCalculation = ref<PriceCalculation>()
+const cartItems = ref<Products[]>()
+const campaignList = ref<Campaigns[]>()
 
-const setPriceDiscount = () => {
-  priceCalculation.value = DiscountEngine.calculateFinalPrice(
-    shoppingCardList,
-    discountCampaignCardList,
-    userPoints
-  )
+const setPriceDiscount = (data) => {
+  calculateDiscountCampaignApi(data)
 }
 
-const selectCampaign = (campaign: DiscountCampaignType): void => {
-  discountCampaignCardList.map((campaignItem) => {
-    return campaignItem.id === campaign.id
-      ? { ...campaign, active: campaign.active }
-      : campaign
+const selectCampaign = (campaign: Campaigns): void => {
+  if (!campaignList?.value) return
+  const activeCampaign = campaignList.value.filter((campaignItem) => {
+    return campaignItem.active
   })
-  setPriceDiscount()
+  setPriceDiscount({ items: cartItems.value, campaigns: activeCampaign })
+}
+
+const fetchProducts = async (): Promise<void> => {
+  try {
+    const response = await getAllProductsApi()
+    cartItems.value = (response as unknown) as Products[]
+  } catch (error) {
+    return Promise.reject(error)
+  }
+}
+
+const fetchCampaign = async (): Promise<void> => {
+  try {
+    const response = await getAllCampaignsApi()
+    campaignList.value = (response as unknown) as Campaigns[]
+  } catch (error) {
+    return Promise.reject(error)
+  }
 }
 
 onMounted(() => {
-  setPriceDiscount()
-  getAllProductsApi()
+  fetchProducts()
+  fetchCampaign()
 })
 </script>
 
@@ -143,21 +67,15 @@ onMounted(() => {
           <TabsTrigger value="campaigns"> 🏷 Campaigns </TabsTrigger>
         </TabsList>
         <TabsContent value="cart">
-          <div class="flex flex-col gap-2">
-            <template
-              v-for="(shoppingCard, index) in shoppingCardList"
-              :key="index"
-            >
+          <div v-if="cartItems?.length" class="flex flex-col gap-2">
+            <template v-for="(shoppingCard, index) in cartItems" :key="index">
               <ShoppingCardItem :shoppingCard="shoppingCard" />
             </template>
           </div>
         </TabsContent>
         <TabsContent value="campaigns">
-          <div class="flex flex-col gap-2">
-            <template
-              v-for="(campaign, index) in discountCampaignCardList"
-              :key="index"
-            >
+          <div v-if="campaignList?.length" class="flex flex-col gap-2">
+            <template v-for="(campaign, index) in campaignList" :key="index">
               <DiscountCampaignCardItem
                 :campaign="campaign"
                 @select:campaign="selectCampaign"

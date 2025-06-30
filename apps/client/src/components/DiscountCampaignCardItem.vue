@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { PropType, computed, ref } from 'vue'
 import Card from './ui/card/Card.vue'
-import type { DiscountCampaign as DiscountCampaignType } from '../types/campaign'
+import { Campaigns } from '../infrastructure/api/campaign/type'
 import Badge from '../components/ui/badge/Badge.vue'
 import Checkbox from '../components/ui/checkbox/Checkbox.vue'
 
 const props = defineProps({
-  campaign: Object as PropType<DiscountCampaignType>,
+  campaign: Object as PropType<Campaigns>,
 })
 const emit = defineEmits<{
-  (event: 'select:campaign', campaign: DiscountCampaignType): void
+  (event: 'select:campaign', campaign: Campaigns): void
 }>()
 
 const isCheckCampaign = ref(false)
@@ -19,43 +19,43 @@ const campaignType = computed(() => {
     case 'percentage':
       return {
         color: 'bg-blue-100 text-blue-800',
-        value: `${props.campaign?.value}% off entire cart`,
+        value: `${props.campaign?.percentage}% off entire cart`,
         badge: 'Coupon',
       }
     case 'fixed':
       return {
         color: 'bg-green-100 text-green-800',
-        value: `${props.campaign?.value} THB off`,
+        value: `${props.campaign?.amount} THB off`,
         badge: 'Coupon',
       }
-    case 'category':
+    case 'category_percentage':
       return {
         color: 'bg-orange-100 text-orange-800',
-        value: `${props.campaign?.value}% off ${props.campaign?.category}`,
+        value: `${props.campaign?.description}`,
         badge: 'On Top',
       }
-    case 'points':
+    case 'point':
       return {
         color: 'bg-purple-100 text-purple-800',
-        value: `Use ${props.campaign?.pointsRequired} points (max ${props.campaign?.maxDiscountPercent}%)`,
+        value: `${props.campaign?.description}`,
         badge: 'On Top',
       }
-    case 'special':
+    case 'seasonal':
       return {
         color: 'bg-red-100 text-red-800',
-        value: `${props.campaign?.specialDiscount} THB off every ${props.campaign?.specialThreshold} THB`,
+        value: `${props.campaign?.discount} THB off every ${props.campaign?.every} THB`,
         badge: 'Seasonal',
       }
     default:
       return {
         color: 'bg-gray-100 text-gray-800',
-        value: props.campaign?.value,
+        value: props.campaign?.amount,
         badge: 'Other',
       }
   }
 })
 
-const toggleCampaign = (campaign: DiscountCampaignType, isCheck: boolean) => {
+const toggleCampaign = (campaign: Campaigns, isCheck: boolean) => {
   isCheckCampaign.value = isCheck
   campaign.active = isCheck
   emit('select:campaign', campaign)
@@ -78,7 +78,9 @@ const toggleCampaign = (campaign: DiscountCampaignType, isCheck: boolean) => {
           </div>
           <div>
             <h3 class="font-semibold text-gray-900">{{ campaign?.name }}</h3>
-            <p class="text-sm text-gray-500">{{ campaign?.description }}</p>
+            <span class="text-sm font-medium text-gray-400">
+              {{ campaignType?.value }}
+            </span>
             <div class="flex items-center space-x-2 mt-2">
               <Badge class="bg-gray-100 text-gray-800">
                 {{ campaignType.badge }}
@@ -86,9 +88,6 @@ const toggleCampaign = (campaign: DiscountCampaignType, isCheck: boolean) => {
               <Badge :class="campaignType.color">
                 {{ campaign?.type }}
               </Badge>
-              <span class="text-sm font-medium text-gray-700">
-                {{ campaignType?.value }}
-              </span>
               <span class="text-xs text-gray-400">
                 Priority: {{ campaign?.priority }}
               </span>
@@ -100,7 +99,9 @@ const toggleCampaign = (campaign: DiscountCampaignType, isCheck: boolean) => {
     <template #action>
       <Checkbox
         :model-value="isCheckCampaign"
-        @update:modelValue="toggleCampaign(campaign as DiscountCampaignType, $event as boolean)"
+        @update:modelValue="
+          toggleCampaign(campaign as Campaigns, $event as boolean)
+        "
       />
     </template>
   </Card>

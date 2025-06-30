@@ -1,5 +1,6 @@
+import { CampaignType } from '../infrastructure/api/campaign/type'
 export interface DiscountCampaign {
-  id: string
+  id: number
   name: string
   type: 'fixed' | 'percentage' | 'category' | 'points' | 'special'
   value: number
@@ -30,11 +31,15 @@ export interface UserPoints {
 }
 
 export type Campaign =
-  | { type: 'fixed'; amount: number }
-  | { type: 'percentage'; percentage: number }
-  | { type: 'category_percentage'; category: string; percentage: number }
-  | { type: 'point'; points: number }
-  | { type: 'seasonal'; every: number; discount: number }
+  | { type: CampaignType.FIXED; amount: number }
+  | { type: CampaignType.PERCENTAGE; percentage: number }
+  | {
+      type: CampaignType.CATEGORY_PERCENTAGE
+      category: string
+      percentage: number
+    }
+  | { type: CampaignType.POINT; points: number }
+  | { type: CampaignType.SEASONAL; every: number; discount: number }
 
 export interface CartItem {
   name: string

@@ -1,5 +1,4 @@
 import http from '../../../utils/Http'
-import { Response } from '../../../utils/Http'
 import { Products } from './type'
 
 enum Api {
@@ -7,5 +6,5 @@ enum Api {
 }
 
 export const getAllProductsApi = () => {
-  return http.get<Response<Products[]>>(`${Api.Product}`)
+  return http.get<Products[]>(`${Api.Product}`)
 }
