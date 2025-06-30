@@ -1,7 +1,16 @@
-import { CartItem } from '../../campaign/dto/interfaces/cart-item.interface';
-import { Campaign } from '../../campaign/dto/interfaces/campaign.interface';
+import { IsArray, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { CartItemDto } from './cart-item.dto';
+import { CampaignDto } from './campaign.dto';
 
 export class CalculateCampaignDto {
-  items: CartItem[];
-  campaigns: Campaign[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CartItemDto)
+  items: CartItemDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CampaignDto)
+  campaigns: CampaignDto[];
 }

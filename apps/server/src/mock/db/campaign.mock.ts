@@ -1,0 +1,43 @@
+export const campaigns = [
+  {
+    id: 1,
+    name: 'Fixed Amount Coupon',
+    type: 'fixed',
+    amount: 50,
+    description: 'Fixed 50 THB discount on entire cart',
+  },
+  {
+    id: 2,
+    name: 'Percentage Discount Coupon',
+    type: 'percentage',
+    percentage: 10,
+    priority: 2,
+    description: '10% off entire cart',
+  },
+  {
+    id: 3,
+    name: 'Clothing Category Discount',
+    type: 'category_percentage',
+    category: 'Clothing',
+    percentage: 15,
+    priority: 3,
+    description: '15% off clothing items',
+  },
+  {
+    id: 4,
+    type: 'point',
+    points: 100,
+    name: 'Points Discount',
+    priority: 5,
+    description: 'Use points for discount (max 20% of total)',
+  },
+  {
+    id: 5,
+    type: 'seasonal',
+    name: 'Special Campaign',
+    every: 300,
+    discount: 40,
+    description: '40 THB off for every 300 THB spent',
+    priority: 5,
+  },
+];

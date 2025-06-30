@@ -9,7 +9,13 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new HttpErrorFilter());
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: false,
+      transform: true,
+    }),
+  );
   app.enableCors({
     origin: 'http://localhost:5173',
   });
