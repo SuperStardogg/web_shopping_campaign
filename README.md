@@ -279,11 +279,11 @@ POST /api/v1/campaign/discount
 1. Show list of products in shopping cart
 
 * Mobile
-![shopping cart mobile](./img/Screen Shot 2568-07-02 at 03.42.11.png)
+* ![shopping cart mobile](./img/Screen%20Shot%202568-07-02%20at%2003.42.11.png)
 
 2. Show list of products in shopping cart
 * Mobile
-![shopping cart mobile](./img/Screen Shot 2568-07-02 at 03.43.26.png)
+* ![campaign mobile](./img/Screen%20Shot%202568-07-02%20at%2003.43.26.png)
 
 * Desktop
-![shopping cart mobile](./img/Screen Shot 2568-07-02 at 03.59.32.png)
+* ![campaign desktop](./img/Screen%20Shot%202568-07-02%20at%2003.59.32.png)
