@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CartItemDto } from './dto/cart-item.dto';
 import { CampaignDto } from './dto/campaign.dto';
 import { CampaignRepository } from './../../mock/repositories/campaign.repository';
+import { CampaignDiscountValidator } from './validators/campaign.validator';
 
 @Injectable()
 export class CampaignService {
@@ -11,7 +12,9 @@ export class CampaignService {
     return this.campaignRepository.findAll();
   }
 
-  calculateFinalPrice(items: CartItemDto[], campaigns: CampaignDto[]) {
+  calculateFinalPrice(items: CartItemDto[], campaigns: CampaignDto[]): number {
+    CampaignDiscountValidator.validate(items, campaigns);
+
     let totalPrice = items.reduce((acc, item) => acc + item.price, 0);
     if (campaigns.length) {
       const prioritizedCampaign = campaigns.sort(

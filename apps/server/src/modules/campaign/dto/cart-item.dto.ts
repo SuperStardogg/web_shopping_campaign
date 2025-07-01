@@ -1,12 +1,12 @@
 import { IsString, IsNumber } from 'class-validator';
 
 export class CartItemDto {
-  @IsString()
+  @IsString({ message: 'Item name must be a string' })
   name: string;
 
-  @IsNumber()
+  @IsNumber({}, { message: 'Item price must be a number' })
   price: number;
 
-  @IsString()
+  @IsString({ message: 'Item category must be a string' })
   category: string;
 }

@@ -1,33 +1,33 @@
 import { IsString, IsNumber, IsOptional } from 'class-validator';
 
 export class CampaignDto {
-  @IsString()
+  @IsString({ message: 'Campaign type is required' })
   type: string;
 
-  @IsNumber()
+  @IsNumber({}, { message: 'priority type is require' })
   priority: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber({}, { message: 'Percentage must be a number' })
   percentage?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber({}, { message: 'Amount must be a number' })
   amount?: number;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: 'Category must be a string' })
   category?: string;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber({}, { message: 'Points must be a number' })
   points?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber({}, { message: 'Every must be a number' })
   every?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber({}, { message: 'Discount must be a number' })
   discount?: number;
 }
