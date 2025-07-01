@@ -35,6 +35,7 @@ export class CampaignService {
             totalPrice = this._getDiscountOnTop(
               totalPrice,
               campaign.percentage,
+              this.calculateCategoryTotals(items)['Clothing'],
             );
             break;
           case 'point':
@@ -64,7 +65,7 @@ export class CampaignService {
   //   Discounts the entire cart by subtracting an amount from the total price
   private _getDiscount(totalPrice: number, amount = 0): number {
     const discount = totalPrice - amount;
-    return Math.round(discount) || 0;
+    return discount || 0;
   }
 
   //   Discounts the entire cart by subtracting a percentage from the total price
@@ -74,14 +75,18 @@ export class CampaignService {
   }
 
   //   Discount the entire amount of a specific category of items in cart
-  private _getDiscountOnTop(totalPrice: number, percentage = 0): number {
-    const onTop = this._getPercentDiscount(totalPrice, percentage);
+  private _getDiscountOnTop(
+    totalPrice: number,
+    percentage = 0,
+    categoryPrice = 0,
+  ): number {
+    const onTop = categoryPrice * (percentage / 100);
     return this._getDiscount(totalPrice - onTop);
   }
 
   //   Users spent points for a fixed amount of discount (1 point = 1 THB). The amount will be capped at 20% of total price
   private _getDiscountPoints(totalPrice: number, point = 0): number {
-    const maxDiscount = Math.round(totalPrice * 0.2); // point up to 20%
+    const maxDiscount = Math.floor(totalPrice * 0.2); // point up to 20%
     const pointValue = Math.min(point, maxDiscount);
     return this._getDiscount(totalPrice, pointValue);
   }
@@ -92,7 +97,7 @@ export class CampaignService {
     discount = 0,
     every = 1,
   ): number {
-    const chunks = Math.round(totalPrice / every);
-    return this._getDiscount(totalPrice, Math.round(chunks * discount));
+    const chunks = Math.floor(totalPrice / every);
+    return this._getDiscount(totalPrice, Math.floor(chunks * discount));
   }
 }
