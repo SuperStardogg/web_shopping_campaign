@@ -263,12 +263,6 @@ POST /api/v1/campaign/discount
 
 ---
 
-## 📝 License
-
-This project is licensed under the [MIT License](LICENSE).
-
----
-
 ## 🙌 Acknowledgements
 
 * [NestJS](https://nestjs.com/)
