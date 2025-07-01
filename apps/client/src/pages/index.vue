@@ -42,6 +42,7 @@ const setPriceDiscount = async (targetCampaign?) => {
       title: '⚠️',
       variant: 'destructive',
       description: (error as any).message,
+      class: '!bg-orange-100',
     })
     return Promise.reject(error)
   }
@@ -72,6 +73,7 @@ const removeItem = (cart: CartItem) => {
   toast({
     title: '⚠️Item removed',
     description: 'Item has been removed from your cart.',
+    class: '!bg-orange-100',
   })
   setPriceDiscount()
 }

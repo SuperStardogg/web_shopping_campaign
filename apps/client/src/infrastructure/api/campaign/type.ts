@@ -12,6 +12,13 @@ export interface Campaigns {
   every?: number
   discount?: number
   active?: boolean
+  subType?: CampaignSubType;
+}
+
+export enum CampaignSubType {
+  COUPON = 'coupon',
+  ON_TOP = 'onTop',
+  SPECIAL = 'special',
 }
 
 export enum CampaignType {
