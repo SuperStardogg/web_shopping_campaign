@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PropType, computed, ref } from 'vue'
 import Card from './ui/card/Card.vue'
-import { Campaigns } from '../infrastructure/api/campaign/type'
+import { Campaigns, CampaignType } from '../infrastructure/api/campaign/type'
 import Badge from '../components/ui/badge/Badge.vue'
 import Checkbox from '../components/ui/checkbox/Checkbox.vue'
 
@@ -16,31 +16,31 @@ const isCheckCampaign = ref(false)
 
 const campaignType = computed(() => {
   switch (props.campaign?.type) {
-    case 'percentage':
+    case CampaignType.PERCENTAGE:
       return {
         color: 'bg-blue-100 text-blue-800',
         value: `${props.campaign?.percentage}% off entire cart`,
         badge: 'Coupon',
       }
-    case 'fixed':
+    case CampaignType.FIXED:
       return {
         color: 'bg-green-100 text-green-800',
         value: `${props.campaign?.amount} THB off`,
         badge: 'Coupon',
       }
-    case 'category_percentage':
+    case CampaignType.CATEGORY_PERCENTAGE:
       return {
         color: 'bg-orange-100 text-orange-800',
         value: `${props.campaign?.description}`,
         badge: 'On Top',
       }
-    case 'point':
+    case CampaignType.POINT:
       return {
         color: 'bg-purple-100 text-purple-800',
         value: `${props.campaign?.description}`,
         badge: 'On Top',
       }
-    case 'seasonal':
+    case CampaignType.SEASONAL:
       return {
         color: 'bg-red-100 text-red-800',
         value: `${props.campaign?.discount} THB off every ${props.campaign?.every} THB`,

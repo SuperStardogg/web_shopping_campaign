@@ -3,11 +3,14 @@ import ShoppingCardItem from '../components/ShoppingCardItem.vue'
 import DiscountCampaignCardItem from '../components/DiscountCampaignCardItem.vue'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import PriceCalculationCard from '../components/PriceCalculationCard.vue'
-import type { UserPoints, PriceCalculation } from '../types'
+import type { UserPoints } from '../types'
 import { ref, onMounted } from 'vue'
 import { getAllProductsApi } from '../infrastructure/api/product'
 import { Products } from '../infrastructure/api/product/type'
-import { Campaigns } from '../infrastructure/api/campaign/type'
+import {
+  Campaigns,
+  CampaignsCalculationResponse,
+} from '../infrastructure/api/campaign/type'
 import {
   calculateDiscountCampaignApi,
   getAllCampaignsApi,
@@ -18,20 +21,17 @@ const userPoints = {
   used: 0,
 } as UserPoints
 
-const priceCalculation = ref<PriceCalculation>()
 const cartItems = ref<Products[]>()
 const campaignList = ref<Campaigns[]>()
+const calculationDiscount = ref<CampaignsCalculationResponse>()
 
-const setPriceDiscount = (data) => {
-  calculateDiscountCampaignApi(data)
-}
-
-const selectCampaign = (campaign: Campaigns): void => {
-  if (!campaignList?.value) return
-  const activeCampaign = campaignList.value.filter((campaignItem) => {
-    return campaignItem.active
-  })
-  setPriceDiscount({ items: cartItems.value, campaigns: activeCampaign })
+const setPriceDiscount = async (data) => {
+  try {
+    const response = await calculateDiscountCampaignApi(data)
+    calculationDiscount.value = (response as unknown) as CampaignsCalculationResponse
+  } catch (error) {
+    return Promise.reject(error)
+  }
 }
 
 const fetchProducts = async (): Promise<void> => {
@@ -50,6 +50,14 @@ const fetchCampaign = async (): Promise<void> => {
   } catch (error) {
     return Promise.reject(error)
   }
+}
+
+const selectCampaign = (campaign: Campaigns): void => {
+  if (!campaignList?.value) return
+  const activeCampaign = campaignList.value.filter((campaignItem) => {
+    return campaignItem.active
+  })
+  setPriceDiscount({ items: cartItems.value, campaigns: activeCampaign })
 }
 
 onMounted(() => {
@@ -87,7 +95,7 @@ onMounted(() => {
       </Tabs>
     </div>
     <div class="w-full max-w-[unset] lg:max-w-[400px]">
-      <PriceCalculationCard :calculation="priceCalculation" />
+      <PriceCalculationCard :calculation="calculationDiscount" />
     </div>
   </div>
 </template>

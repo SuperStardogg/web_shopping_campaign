@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { PropType } from 'vue'
+import { computed, PropType } from 'vue'
 import Card from './ui/card/Card.vue'
-import type { PriceCalculation as PriceCalculationType } from '../types'
 import Separator from './ui/separator/Separator.vue'
+import { CampaignsCalculationResponse } from '../infrastructure/api/campaign/type'
 
 const props = defineProps({
-  calculation: Object as PropType<PriceCalculationType>,
+  calculation: Object as PropType<CampaignsCalculationResponse>,
 })
 
-const groupedDiscounts = props.calculation?.appliedDiscounts.reduce(
-  (acc, discount) => {
-    if (!acc[discount.campaignName]) {
-      acc[discount.campaignName] = 0
-    }
-    acc[discount.campaignName] += discount.discountAmount
-    return acc
-  },
-  {} as Record<string, number>
+const priceBeforeDiscount = computed((): number => {
+  if (!props.calculation?.categoryPrice) return 0
+  return Object.values(props.calculation?.categoryPrice as {}).reduce(
+    (sum: number, val: any) => sum + val,
+    0
+  )
+})
+const priceSaving = computed(
+  (): number => priceBeforeDiscount.value - (props.calculation?.finalPrice || 0)
 )
 </script>
 
@@ -30,26 +30,15 @@ const groupedDiscounts = props.calculation?.appliedDiscounts.reduce(
         <div class="flex justify-between items-center">
           <span class="text-gray-600">Subtotal</span>
           <span class="font-medium">
-            {{ calculation?.subtotal?.toFixed(2) || 0 }}</span
+            {{ priceBeforeDiscount?.toFixed(2) || 0 }}</span
           >
         </div>
 
-        <div
-          v-for="(item, index) in groupedDiscounts"
-          :key="index"
-          class="flex justify-between items-center text-green-600"
-        >
-          <span class="text-sm">{{ item[0] }}</span>
-          <span class="font-medium">-{{ item[1].toFixed(2) }}</span>
-        </div>
-
-        <div v-if="calculation && calculation?.totalDiscount > 0">
+        <div v-if="priceSaving > 0">
           <Separator />
           <div class="flex justify-between items-center text-green-600">
             <span class="font-medium">Total Savings</span>
-            <span class="font-bold"
-              >-฿{{ calculation.totalDiscount.toFixed(2) }}</span
-            >
+            <span class="font-bold">-฿{{ priceSaving.toFixed(2) }}</span>
           </div>
         </div>
 
@@ -58,17 +47,16 @@ const groupedDiscounts = props.calculation?.appliedDiscounts.reduce(
         <div class="flex justify-between items-center text-lg font-bold">
           <span>Final Total</span>
           <span class="text-blue-600 ml-2">{{
-            calculation?.finalTotal?.toFixed(2) || 0
+            calculation?.finalPrice?.toFixed(2) || 0
           }}</span>
         </div>
 
         <div
-          v-if="calculation && calculation?.totalDiscount > 0"
+          v-if="priceSaving > 0"
           class="text-center p-3 bg-green-100 rounded-lg"
         >
           <p class="text-sm text-green-800 font-medium">
-            🎉 You saved {{ calculation?.totalDiscount?.toFixed(2) || 0 }} on
-            this order!
+            🎉 You saved {{ priceSaving?.toFixed(2) || 0 }} on this order!
           </p>
         </div>
       </div>

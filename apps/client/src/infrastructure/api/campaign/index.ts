@@ -1,5 +1,5 @@
 import http from '../../../utils/Http'
-import { Campaigns, CampaignsRequestBody } from './type'
+import { Campaigns, CampaignsCalculationResponse, CampaignsRequestBody } from './type'
 
 enum Api {
   Campaign = '/api/v1/campaign',
@@ -11,5 +11,5 @@ export const getAllCampaignsApi = () => {
 }
 
 export const calculateDiscountCampaignApi = (data: CampaignsRequestBody) => {
-  return http.post<any>(`${Api.Campaign}${Api.Discount}`, data)
+  return http.post<CampaignsCalculationResponse>(`${Api.Campaign}${Api.Discount}`, data)
 }

@@ -26,3 +26,14 @@ export interface CampaignsRequestBody {
   items: CartItem[]
   campaigns: Campaign[]
 }
+
+interface CategoryPrice {
+  Accessories?: number
+  Clothing?: number
+  Electronics?: number
+}
+
+export interface CampaignsCalculationResponse {
+  categoryPrice: CategoryPrice
+  finalPrice: number
+}
