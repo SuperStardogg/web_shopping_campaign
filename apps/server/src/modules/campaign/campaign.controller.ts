@@ -18,6 +18,9 @@ export class CampaignController {
         payload.items,
         payload.campaigns,
       ),
+      categoryPrice: this.campaignService.calculateCategoryTotals(
+        payload.items,
+      ),
     };
   }
 }

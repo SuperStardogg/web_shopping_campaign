@@ -4,6 +4,9 @@ export class CampaignDto {
   @IsString()
   type: string;
 
+  @IsNumber()
+  priority: number;
+
   @IsOptional()
   @IsNumber()
   percentage?: number;

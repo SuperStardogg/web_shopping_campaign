@@ -4,6 +4,7 @@ export const campaigns = [
     name: 'Fixed Amount Coupon',
     type: 'fixed',
     amount: 50,
+    priority: 1,
     description: 'Fixed 50 THB discount on entire cart',
   },
   {
@@ -28,7 +29,7 @@ export const campaigns = [
     type: 'point',
     points: 100,
     name: 'Points Discount',
-    priority: 5,
+    priority: 4,
     description: 'Use points for discount (max 20% of total)',
   },
   {
