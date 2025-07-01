@@ -272,4 +272,18 @@ POST /api/v1/campaign/discount
 * [class-validator](https://github.com/typestack/class-validator)
 * [concurrently](https://github.com/open-cli-tools/concurrently)
 
+---
 
+## 🖥 Result
+
+1. Show list of products in shopping cart
+
+* Mobile
+![shopping cart mobile](./img/Screen Shot 2568-07-02 at 03.42.11.png)
+
+2. Show list of products in shopping cart
+* Mobile
+![shopping cart mobile](./img/Screen Shot 2568-07-02 at 03.43.26.png)
+
+* Desktop
+![shopping cart mobile](./img/Screen Shot 2568-07-02 at 03.59.32.png)
