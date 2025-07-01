@@ -54,7 +54,7 @@ body {
     --radius: 0.5rem;
     --tw-bg-opacity: 1;
     --tw-shadow-colored: 0 0 #0000;
-    --tw-ring-shadow: 0 0 #333
+    --tw-ring-shadow: 0 0 #333;
   }
   .dark {
     --background: 0 0% 3.9%;

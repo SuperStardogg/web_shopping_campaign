@@ -17,10 +17,10 @@ export default {
       spacing: {
         15: '3.75rem',
       },
-    },
-    colors: {
-      ...defaultColors,
+      colors: {
+        ...defaultColors,
+      },
     },
   },
-  plugins: [ ],
+  plugins: [],
 } satisfies Config

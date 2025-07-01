@@ -9,10 +9,10 @@ const props = defineProps({
   campaign: Object as PropType<Campaigns>,
 })
 const emit = defineEmits<{
-  (event: 'select:campaign', campaign: Campaigns): void
+  (event: 'select:campaign', campaign: Campaigns, isActive: boolean): void
 }>()
 
-const isCheckCampaign = ref(false)
+const isActiveCampaign = ref(false)
 
 const campaignType = computed(() => {
   switch (props.campaign?.type) {
@@ -55,17 +55,17 @@ const campaignType = computed(() => {
   }
 })
 
-const toggleCampaign = (campaign: Campaigns, isCheck: boolean) => {
-  isCheckCampaign.value = isCheck
-  campaign.active = isCheck
-  emit('select:campaign', campaign)
+const toggleCampaign = (campaign: Campaigns, isActive: boolean) => {
+  isActiveCampaign.value = isActive
+  // campaign.active = isCheck
+  emit('select:campaign', campaign, isActive)
 }
 </script>
 
 <template>
   <Card
     :class="`p-4 transition-all duration-200 ${
-      isCheckCampaign ? 'ring-2 ring-blue-200 bg-blue-50' : 'bg-white'
+      campaign?.active ? 'ring-2 ring-blue-200 bg-blue-50' : 'bg-white'
     }`"
   >
     <template #content>
@@ -98,7 +98,7 @@ const toggleCampaign = (campaign: Campaigns, isCheck: boolean) => {
     </template>
     <template #action>
       <Checkbox
-        :model-value="isCheckCampaign"
+        :model-value="campaign?.active"
         @update:modelValue="
           toggleCampaign(campaign as Campaigns, $event as boolean)
         "

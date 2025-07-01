@@ -6,6 +6,9 @@ import type { CartItem as CartItemType } from '../types/shoppingCard'
 defineProps({
   shoppingCard: Object as PropType<CartItemType>,
 })
+const emit = defineEmits<{
+  (event: 'remove:item', item?: CartItemType): void
+}>()
 </script>
 
 <template>
@@ -27,7 +30,9 @@ defineProps({
       </div>
     </template>
     <template #action>
-      <button class="bg-white">🗑</button>
+      <button class="bg-white" @click="emit('remove:item', shoppingCard)">
+        🗑
+      </button>
     </template>
   </Card>
 </template>

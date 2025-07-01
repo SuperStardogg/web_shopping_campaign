@@ -3,33 +3,46 @@ import ShoppingCardItem from '../components/ShoppingCardItem.vue'
 import DiscountCampaignCardItem from '../components/DiscountCampaignCardItem.vue'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import PriceCalculationCard from '../components/PriceCalculationCard.vue'
-import type { UserPoints } from '../types'
-import { ref, onMounted } from 'vue'
+import type { CartItem, UserPoints } from '../types'
+import { ref, onMounted, watch } from 'vue'
 import { getAllProductsApi } from '../infrastructure/api/product'
 import { Products } from '../infrastructure/api/product/type'
 import {
   Campaigns,
   CampaignsCalculationResponse,
+  CampaignsRequestBody,
 } from '../infrastructure/api/campaign/type'
 import {
   calculateDiscountCampaignApi,
   getAllCampaignsApi,
 } from '../infrastructure/api/campaign'
+import { useToast } from '../hooks/use-toast'
 
 const userPoints = {
   available: 68,
   used: 0,
 } as UserPoints
 
+const { toast } = useToast()
 const cartItems = ref<Products[]>()
 const campaignList = ref<Campaigns[]>()
 const calculationDiscount = ref<CampaignsCalculationResponse>()
 
-const setPriceDiscount = async (data) => {
+const setPriceDiscount = async (targetCampaign?) => {
   try {
+    const data = {
+      items: cartItems.value,
+      campaigns: findActiveCampaign(),
+    } as CampaignsRequestBody
     const response = await calculateDiscountCampaignApi(data)
     calculationDiscount.value = (response as unknown) as CampaignsCalculationResponse
   } catch (error) {
+    if (targetCampaign) setTargetCampaign(targetCampaign, false)
+    toast({
+      title: '⚠️',
+      variant: 'destructive',
+      description: (error as any).message,
+    })
     return Promise.reject(error)
   }
 }
@@ -52,22 +65,45 @@ const fetchCampaign = async (): Promise<void> => {
   }
 }
 
-const selectCampaign = (campaign: Campaigns): void => {
-  if (!campaignList?.value) return
-  const activeCampaign = campaignList.value.filter((campaignItem) => {
-    return campaignItem.active
+const removeItem = (cart: CartItem) => {
+  if (!cartItems?.value) return
+  const index = cartItems.value.findIndex((value) => value.id === cart.id)
+  cartItems.value.splice(index, 1)
+  toast({
+    title: '⚠️Item removed',
+    description: 'Item has been removed from your cart.',
   })
-  setPriceDiscount({ items: cartItems.value, campaigns: activeCampaign })
+  setPriceDiscount()
 }
 
-onMounted(() => {
-  fetchProducts()
-  fetchCampaign()
+const findActiveCampaign = () => {
+  if (!campaignList?.value) return
+  return campaignList.value.filter((campaignItem) => campaignItem.active)
+}
+
+const setTargetCampaign = (targetCampaign: Campaigns, isActive: boolean) => {
+  if (!campaignList?.value) return
+  campaignList.value.map((campaign) =>
+    campaign.id === targetCampaign.id
+      ? (targetCampaign.active = isActive)
+      : campaign
+  )
+}
+
+const selectCampaign = (targetCampaign: Campaigns, isActive: boolean): void => {
+  setTargetCampaign(targetCampaign, isActive)
+  setPriceDiscount(targetCampaign)
+}
+
+onMounted(async () => {
+  await fetchCampaign()
+  await fetchProducts()
+  await setPriceDiscount()
 })
 </script>
 
 <template>
-  <div class="flex gap-4 flex-col lg:flex-row">
+  <div class="flex gap-4 flex-col lg:flex-row w-full">
     <div class="w-full">
       <Tabs default-value="cart">
         <TabsList>
@@ -77,12 +113,18 @@ onMounted(() => {
         <TabsContent value="cart">
           <div v-if="cartItems?.length" class="flex flex-col gap-2">
             <template v-for="(shoppingCard, index) in cartItems" :key="index">
-              <ShoppingCardItem :shoppingCard="shoppingCard" />
+              <ShoppingCardItem
+                :shoppingCard="shoppingCard"
+                @remove:item="removeItem($event)"
+              />
             </template>
           </div>
         </TabsContent>
         <TabsContent value="campaigns">
-          <div v-if="campaignList?.length" class="flex flex-col gap-2">
+          <div
+            v-if="campaignList?.length && cartItems?.length"
+            class="flex flex-col gap-2"
+          >
             <template v-for="(campaign, index) in campaignList" :key="index">
               <DiscountCampaignCardItem
                 :campaign="campaign"
@@ -91,6 +133,7 @@ onMounted(() => {
               </DiscountCampaignCardItem>
             </template>
           </div>
+          <div v-else>Please select campaign</div>
         </TabsContent>
       </Tabs>
     </div>
