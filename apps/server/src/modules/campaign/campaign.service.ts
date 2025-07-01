@@ -99,6 +99,8 @@ export class CampaignService {
     every = 1,
   ): number {
     const chunks = Math.floor(totalPrice / every);
-    return this._getDiscount(totalPrice, Math.floor(chunks * discount));
+    return totalPrice > 0
+      ? this._getDiscount(totalPrice, Math.floor(chunks * discount))
+      : 0;
   }
 }
