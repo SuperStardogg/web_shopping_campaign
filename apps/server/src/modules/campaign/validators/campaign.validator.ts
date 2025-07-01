@@ -1,25 +1,27 @@
 import { BadRequestException } from '@nestjs/common';
 import { CartItemDto } from '../dto/cart-item.dto';
 import { CampaignDto } from '../dto/campaign.dto';
+import { CampaignType } from '../constants/campaign-type.enum';
 
 export class CampaignDiscountValidator {
   static validate(items: CartItemDto[], campaigns: CampaignDto[]): void {
     const cartTotal = items.reduce((sum, item) => sum + item.price, 0);
 
-    // 1. Only one coupon campaign
-    const couponTypes = ['fixed', 'percentage'];
-    const couponCampaigns = campaigns.filter((c) =>
-      couponTypes.includes(c.type),
-    );
-    if (couponCampaigns.length > 1) {
-      throw new BadRequestException(
-        'Only one coupon campaign (fixed or percentage) can be applied.',
-      );
+    // 1. Only one campaign type can be applied
+    const seenTypes = new Set<string>();
+    for (const campaign of campaigns) {
+      const key = campaign.subType;
+      if (seenTypes.has(key)) {
+        throw new BadRequestException(
+          `Only one campaign of type "${key}" can be applied at a time.`,
+        );
+      }
+      seenTypes.add(key);
     }
 
     // 2. Unique categories in category_percentage
     const categoryDiscounts = campaigns.filter(
-      (c) => c.type === 'category_percentage',
+      (c) => c.type === CampaignType.CATEGORY_PERCENTAGE,
     );
     const seen = new Set();
     for (const c of categoryDiscounts) {
@@ -37,7 +39,7 @@ export class CampaignDiscountValidator {
     }
 
     // 3. Points rule: point should be more than 0
-    const pointCampaign = campaigns.find((c) => c.type === 'point');
+    const pointCampaign = campaigns.find((c) => c.type === CampaignType.POINT);
     if (pointCampaign) {
       if (!pointCampaign.points || pointCampaign.points <= 0) {
         throw new BadRequestException('Points must be greater than 0.');
@@ -45,7 +47,7 @@ export class CampaignDiscountValidator {
     }
 
     // 4. Seasonal discount only if threshold met
-    const seasonal = campaigns.find((c) => c.type === 'seasonal');
+    const seasonal = campaigns.find((c) => c.type === CampaignType.SEASONAL);
     if (seasonal) {
       if (
         typeof seasonal.every !== 'number' ||

@@ -5,3 +5,9 @@ export enum CampaignType {
   POINT = 'point',
   SEASONAL = 'seasonal',
 }
+
+export enum CampaignSubType {
+  COUPON = 'coupon',
+  ON_TOP = 'onTop',
+  SPECIAL = 'special',
+}

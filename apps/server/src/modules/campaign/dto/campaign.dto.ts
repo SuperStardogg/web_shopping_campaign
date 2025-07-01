@@ -1,8 +1,9 @@
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsEnum } from 'class-validator';
+import { CampaignSubType, CampaignType } from '../constants/campaign-type.enum';
 
 export class CampaignDto {
-  @IsString({ message: 'Campaign type is required' })
-  type: string;
+  @IsEnum(CampaignType, { message: 'Campaign type is required' })
+  type: CampaignType;
 
   @IsNumber({}, { message: 'priority type is require' })
   priority: number;
@@ -30,4 +31,8 @@ export class CampaignDto {
   @IsOptional()
   @IsNumber({}, { message: 'Discount must be a number' })
   discount?: number;
+
+  @IsOptional()
+  @IsEnum(CampaignSubType)
+  subType: CampaignSubType;
 }

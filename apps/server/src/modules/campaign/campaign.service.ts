@@ -3,6 +3,7 @@ import { CartItemDto } from './dto/cart-item.dto';
 import { CampaignDto } from './dto/campaign.dto';
 import { CampaignRepository } from './../../mock/repositories/campaign.repository';
 import { CampaignDiscountValidator } from './validators/campaign.validator';
+import { CampaignType } from './constants/campaign-type.enum';
 
 @Injectable()
 export class CampaignService {
@@ -22,26 +23,26 @@ export class CampaignService {
       );
       for (const campaign of prioritizedCampaign) {
         switch (campaign.type) {
-          case 'fixed':
+          case CampaignType.FIXED:
             totalPrice = this._getDiscount(totalPrice, campaign.amount);
             break;
-          case 'percentage':
+          case CampaignType.PERCENTAGE:
             totalPrice = this._getPercentDiscount(
               totalPrice,
               campaign.percentage,
             );
             break;
-          case 'category_percentage':
+          case CampaignType.CATEGORY_PERCENTAGE:
             totalPrice = this._getDiscountOnTop(
               totalPrice,
               campaign.percentage,
               this.calculateCategoryTotals(items)['Clothing'],
             );
             break;
-          case 'point':
+          case CampaignType.POINT:
             totalPrice = this._getDiscountPoints(totalPrice, campaign.points);
             break;
-          case 'seasonal':
+          case CampaignType.SEASONAL:
             totalPrice = this._getDiscountSeasonal(
               totalPrice,
               campaign.discount,
@@ -65,7 +66,7 @@ export class CampaignService {
   //   Discounts the entire cart by subtracting an amount from the total price
   private _getDiscount(totalPrice: number, amount = 0): number {
     const discount = totalPrice - amount;
-    return discount || 0;
+    return totalPrice > 0 ? discount : 0;
   }
 
   //   Discounts the entire cart by subtracting a percentage from the total price
