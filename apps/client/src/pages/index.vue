@@ -42,7 +42,7 @@ const setPriceDiscount = async (targetCampaign?) => {
       title: '⚠️',
       variant: 'destructive',
       description: (error as any).message,
-      class: '!bg-orange-100',
+      class: '!text-white',
     })
     return Promise.reject(error)
   }

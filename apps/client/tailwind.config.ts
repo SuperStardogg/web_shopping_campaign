@@ -1,26 +1,21 @@
 import { type Config } from 'tailwindcss'
-import defaultColors from 'tailwindcss/colors'
+import { fontFamily } from 'tailwindcss/defaultTheme'
+
 export default {
   darkMode: 'class',
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      zIndex: {
-        1: '1',
-        2: '2',
-        99: '99',
-        999: '999',
-      },
-      borderWidth: {
-        1: '1px',
-      },
-      spacing: {
-        15: '3.75rem',
+      fontFamily: {
+        sans: ['Inter', ...fontFamily.sans],
       },
       colors: {
-        ...defaultColors,
+        // Optional custom theme overrides
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        destructive: 'hsl(var(--destructive))',
       },
     },
   },
-  plugins: [],
+  plugins: [require('tailwindcss-animate')],
 } satisfies Config
