@@ -34,8 +34,8 @@ my-monorepo/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-org/discount-campaign-monorepo.git
-cd discount-campaign-monorepo
+git clone https://github.com/SuperStardogg/web_shopping_campaign.git
+cd web_shopping_campaign
 ```
 
 ### 2. Install Dependencies
